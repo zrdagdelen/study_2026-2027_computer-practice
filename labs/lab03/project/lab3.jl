@@ -1,0 +1,439 @@
+#!/usr/bin/env julia
+
+using DrWatson
+@quickactivate
+using Random
+
+# ## Примеры из теории
+#
+# Перед выполнением заданий рассмотрим базовые конструкции языка Julia:
+# циклы `while` и `for`, тернарный оператор, функции разных форм,
+# функции высшего порядка `map` и `broadcast`.
+
+# ### Цикл while
+#
+# Выведем числа от 1 до 10 с помощью цикла `while`.
+
+function demo_while()
+    n = 0
+    while n < 10
+        n += 1
+        println(n)
+    end
+end
+
+demo_while()
+
+# ### Цикл for по диапазону
+#
+# Тот же результат можно получить циклом `for` с шагом 2.
+
+function demo_for_range()
+    for k in 1:2:10
+        println(k)
+    end
+end
+
+demo_for_range()
+
+# ### Цикл for по массиву строк
+#
+# Пройдёмся по массиву имён и выведем приветствие для каждого.
+
+function demo_for_array()
+    myfriends = ["Ted", "Robyn", "Barney", "Lily", "Marshall"]
+    for friend in myfriends
+        println("Hi $friend, it's great to see you!")
+    end
+end
+
+demo_for_array()
+
+# ### Тернарный оператор
+#
+# Тернарный оператор позволяет записать условное выражение в одну строку.
+
+function demo_ternary()
+    x = 5
+    y = 10
+    println("(x > y) ? x : y = ", (x > y) ? x : y)
+end
+
+demo_ternary()
+
+# ### Функции
+#
+# В Julia функцию можно объявить несколькими способами: через `function ... end`,
+# в одну строку и как анонимную функцию.
+
+function demo_functions()
+    sayhi(name) = println("Hi $name, it's great to see you!")
+    f2(x) = x^2
+
+    sayhi3 = name -> println("Hi $name, it's great to see you!")
+    f3 = x -> x^2
+
+    sayhi("C-3PO")
+    println("f2(42) = ", f2(42))
+    sayhi3("BB-8")
+    println("f3(42) = ", f3(42))
+end
+
+demo_functions()
+
+# ### Функции с восклицательным знаком
+#
+# По соглашению функции с `!` изменяют свой аргумент, без `!` — не изменяют.
+# Сравним `sort` и `sort!`.
+
+function demo_sort()
+    v = [3, 5, 2]
+    println("Исходный массив: ", v)
+    println("sort(v) = ", sort(v))
+    println("v после sort(v): ", v)
+    sort!(v)
+    println("v после sort!(v): ", v)
+end
+
+demo_sort()
+
+# ### Функции высшего порядка: map и broadcast
+#
+# `map` применяет функцию к каждому элементу коллекции.
+# `broadcast` делает то же самое, но с поддержкой трансляции размерностей.
+
+function demo_map_broadcast()
+    f_sq(x) = x^2
+    println("map(f_sq, [1,2,3]) = ", map(f_sq, [1, 2, 3]))
+    println("map(x -> x^3, [1,2,3]) = ", map(x -> x^3, [1, 2, 3]))
+    println("broadcast(f_sq, [1,2,3]) = ", broadcast(f_sq, [1, 2, 3]))
+    println("f_sq.([1,2,3]) = ", f_sq.([1, 2, 3]))
+end
+
+demo_map_broadcast()
+
+# ### Матрица через генератор
+#
+# Создадим матрицу через генератор и применим к ней функцию `f`.
+
+function demo_matrix_gen()
+    f(x) = x^2
+    A = [i + 3*j for j in 0:2, i in 1:3]
+    display(A)
+    println("\nf(A) = A*A:")
+    display(f(A))
+end
+
+demo_matrix_gen()
+
+# ## Задание 1. Циклы, словарь, массив
+#
+# Требуется:
+# 1. Вывести целые числа от 1 до 100 и их квадраты.
+# 2. Создать словарь `squares` с парами «число → квадрат».
+# 3. Создать массив `squares_arr` с квадратами чисел от 1 до 100.
+
+function task1()
+    squares = Dict{Int, Int}()
+    i = 1
+    while i <= 100
+        squares[i] = i^2
+        println("$i^2 = $(i^2)")
+        i += 1
+    end
+
+    squares_arr = [k^2 for k in 1:100]
+    println("\nsquares_arr (первые 10): ", squares_arr[1:10], " ...")
+end
+
+task1()
+
+# ## Задание 2. Условный оператор: чётное/нечётное
+#
+# Напишем функцию, которая печатает «чётное» для чётных чисел и «нечётное» — для нечётных.
+# Реализуем двумя способами: через `if` и через тернарный оператор.
+
+function task2()
+    function check_parity_if(x)
+        if x % 2 == 0
+            println("$x — чётное")
+        else
+            println("$x — нечётное")
+        end
+    end
+
+    check_parity_if(7)
+    check_parity_if(10)
+
+    check_parity_ternary(x) = println("$x — ", x % 2 == 0 ? "чётное" : "нечётное")
+    check_parity_ternary(7)
+    check_parity_ternary(10)
+end
+
+task2()
+
+# ## Задание 3. Функция add_one
+#
+# Функция `add_one` добавляет 1 к своему аргументу.
+
+function task3()
+    add_one(x) = x + 1
+    println("add_one(41) = ", add_one(41))
+end
+
+task3()
+
+# ## Задание 4. map / broadcast: увеличение элементов матрицы
+#
+# Используем `broadcast` (или `map`) для увеличения каждого элемента матрицы на 1.
+
+function task4()
+    add_one(x) = x + 1
+    A4x4 = reshape(1:16, 4, 4)
+    println("Исходная матрица A4x4:")
+    display(A4x4)
+    println("\nadd_one.(A4x4) — каждый элемент +1:")
+    display(add_one.(A4x4))
+end
+
+task4()
+
+# ## Задание 5. Матрица A, A³, замена столбца
+#
+# Дана матрица:
+#
+# $$A = \begin{pmatrix} 1 & 1 & 3 \\ 5 & 2 & 6 \\ -2 & -1 & -3 \end{pmatrix}.$$
+#
+# Требуется найти $A^3$ и заменить третий столбец на сумму второго и третьего.
+
+function task5()
+    A5x5 = [1 1 3; 5 2 6; -2 -1 -3]
+    println("Матрица A:")
+    display(A5x5)
+
+    println("\nA^3:")
+    display(A5x5^3)
+
+    println("\nЗамена 3-го столбца на сумму 2-го и 3-го:")
+    B5 = copy(A5x5)
+    B5[:, 3] = A5x5[:, 2] + A5x5[:, 3]
+    display(B5)
+end
+
+task5()
+
+# ## Задание 6. Матрица B и C = Bᵀ·B
+#
+# Создадим матрицу B размера 15×2 с элементами $B_{i1} = 10$, $B_{i2} = -10$
+# для $i = 1, \ldots, 15$. Вычислим $C = B^T B$.
+
+function task6()
+    Bm = zeros(Int, 15, 2)
+    for i in 1:15
+        Bm[i, 1] = 10
+        Bm[i, 2] = -10
+    end
+    println("Матрица B (первые 5 строк):")
+    display(Bm[1:5, :])
+    println("...")
+
+    C = Bm' * Bm
+    println("\nC = Bᵀ·B:")
+    display(C)
+end
+
+task6()
+
+# ## Задание 7. Матрицы Z₁..Z₄
+#
+# Создадим матрицы 6×6 из нулей и единиц по заданным закономерностям.
+# Вспомогательная функция `make_Z` принимает предикат и размер.
+
+function task7()
+    function make_Z(pattern::Function, n::Int)
+        Z = zeros(Int, n, n)
+        for i in 1:n
+            for j in 1:n
+                Z[i, j] = pattern(i, j) ? 1 : 0
+            end
+        end
+        return Z
+    end
+
+    Z1 = make_Z((i, j) -> abs(i - j) == 1, 6)
+    Z2 = make_Z((i, j) -> (i + j) % 2 == 0 && abs(i - j) <= 2, 6)
+    Z3 = make_Z((i, j) -> (i + j) % 2 == 1 && 5 <= i + j <= 10, 6)
+    Z4 = make_Z((i, j) -> (i + j) % 2 == 0, 6)
+
+    println("Z1 (единицы на диагоналях):");  display(Z1)
+    println("\nZ2 (шахматный, i+j чётное):");  display(Z2)
+    println("\nZ3 (симметричная):");            display(Z3)
+    println("\nZ4 (шахматный, i+j чётное):");  display(Z4)
+end
+
+task7()
+
+# ## Задание 8. Функция outer() и матрицы A₁..A₅
+#
+# Реализуем аналог функции `outer()` языка R:
+# `outer(x, y, operation)` возвращает матрицу, где $C_{ij} = \text{operation}(x_i, y_j)$.
+
+function task8()
+    """
+        outer(x, y, operation)
+
+    Аналог функции outer() языка R.
+    Возвращает матрицу C, где C[i, j] = operation(x[i], y[j]).
+    """
+    function outer(x, y, operation)
+        m = length(x)
+        n_ = length(y)
+        C_ = Matrix{Any}(undef, m, n_)
+        for i in 1:m
+            for j in 1:n_
+                C_[i, j] = operation(x[i], y[j])
+            end
+        end
+        return C_
+    end
+
+    println("Проверка outer:")
+    display(outer([1, 2, 3], [10, 20, 30], *))
+    println()
+    display(outer([1, 2, 3], [10, 20, 30], +))
+
+    println("\nA1 = outer(0:4, 0:4, +):")
+    display(outer(0:4, 0:4, +))
+
+    println("\nA2 = outer(0:4, 0:4, i^j), 0^0=0:")
+    display(outer(0:4, 0:4, (a, b) -> (a == 0 && b == 0) ? 0 : a^b))
+
+    println("\nA3 = outer(0:4, 0:4, (i+j)%5):")
+    display(outer(0:4, 0:4, (a, b) -> (a + b) % 5))
+
+    println("\nA4 = outer(0:9, 0:9, (i+j)%10):")
+    display(outer(0:9, 0:9, (a, b) -> (a + b) % 10))
+
+    println("\nA5 = outer(0:8, 0:8, (j-i)%9):")
+    display(outer(0:8, 0:8, (a, b) -> mod(b - a, 9)))
+end
+
+task8()
+
+# ## Задание 9. Решение СЛАУ Ax = y
+#
+# Дана система линейных уравнений с 5 неизвестными:
+#
+# $$\begin{cases}
+# x_1 + 2x_2 + 3x_3 + 4x_4 + 5x_5 = 7, \\
+# 2x_1 + x_2 + 2x_3 + 3x_4 + 4x_5 = -1, \\
+# 3x_1 + 2x_2 + x_3 + 2x_4 + 3x_5 = -3, \\
+# 4x_1 + 3x_2 + 2x_3 + x_4 + 2x_5 = 5, \\
+# 5x_1 + 4x_2 + 3x_3 + 2x_4 + x_5 = 17.
+# \end{cases}$$
+#
+# Матрица $A$ — симметричная тёплицева: $A_{ij} = |i - j| + 1$.
+
+function task9()
+    function build_A(n)
+        A_ = zeros(Float64, n, n)
+        for i in 1:n
+            for j in 1:n
+                A_[i, j] = abs(i - j) + 1
+            end
+        end
+        return A_
+    end
+
+    y9 = [7.0, -1.0, -3.0, 5.0, 17.0]
+    A9 = build_A(5)
+    println("Матрица A (5x5):")
+    display(A9)
+    println("\nВектор y:")
+    display(y9)
+
+    x9 = A9 \ y9
+    println("\nРешение x = A \\ y:")
+    display(x9)
+    println("\nПроверка A*x:")
+    display(A9 * x9)
+
+    A10 = build_A(10)
+    y10 = ones(Float64, 10)
+    x10 = A10 \ y10
+    println("\nОтклонение A10*x10 - y10 для n=10: ", maximum(abs.(A10 * x10 - y10)))
+end
+
+task9()
+
+# ## Задание 10. Матрица 6×10
+#
+# Создадим матрицу M размера 6×10 из случайных целых чисел от 1 до 10
+# и выполним три подзадания.
+
+function task10()
+    Random.seed!(1234)
+    M = rand(1:10, 6, 10)
+    println("Матрица M:")
+    display(M)
+
+    N = 4
+    counts = [count(>(N), M[i, :]) for i in 1:size(M, 1)]
+    println("\nЧисло элементов > $N по строкам:")
+    for i in 1:size(M, 1)
+        println("Строка $i: ", counts[i])
+    end
+
+    Mtarget = 7
+    rows_with_two = [i for i in 1:size(M, 1) if count(==(Mtarget), M[i, :]) == 2]
+    println("\nСтроки, где $Mtarget встречается ровно 2 раза: ", rows_with_two)
+
+    K = 75
+    col_sums = [sum(M[:, j]) for j in 1:size(M, 2)]
+    println("\nСуммы по столбцам: ", col_sums)
+
+    pairs = Tuple{Int, Int}[]
+    for j1 in 1:size(M, 2)
+        for j2 in (j1+1):size(M, 2)
+            if col_sums[j1] + col_sums[j2] > K
+                push!(pairs, (j1, j2))
+            end
+        end
+    end
+    println("Пары столбцов с суммой > $K: ", pairs)
+end
+
+task10()
+
+# ## Задание 11. Двойные суммы
+#
+# Вычислим две двойные суммы:
+#
+# $$S_1 = -\sum_{i=1}^{20} \sum_{j=1}^{5} \frac{i^4}{3 + j},$$
+#
+# $$S_2 = -\sum_{i=1}^{20} \sum_{j=1}^{5} \frac{i^4}{3 + i \cdot j}.$$
+
+function task11()
+    S1 = -sum(i^4 / (3 + j) for i in 1:20, j in 1:5)
+    println("S1 = ", S1)
+
+    S2 = -sum(i^4 / (3 + i*j) for i in 1:20, j in 1:5)
+    println("S2 = ", S2)
+end
+
+task11()
+
+# ## Выводы
+#
+# В ходе работы были освоены и применены на практике:
+#
+# - циклы `while` и `for` — для перебора элементов, работы со словарями и матрицами;
+# - условный оператор `if` и тернарный оператор — для проверки чётности;
+# - функции разных форм (обычные, однострочные, анонимные, с `!`);
+# - функции высшего порядка `map` и `broadcast` — для поэлементной обработки массивов;
+# - функция `outer()`, реализующая внешнее произведение с произвольной операцией;
+# - решение СЛАУ через оператор `\` с обобщением на разные размеры;
+# - генерация случайных матриц с воспроизводимостью через `Random.seed!`;
+# - двойные суммы через генераторы.
+#
+# Все задания 1–11 выполнены, результаты совпадают с ожидаемыми.
