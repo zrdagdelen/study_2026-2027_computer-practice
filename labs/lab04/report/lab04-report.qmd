@@ -2,7 +2,7 @@
 ## Author
 author:
   name: Дагделен Зейнап Реджеповна
-  email: 1132236052.ru
+  email: 1132236052@rudn.ru
   affiliation:
     - name: Российский университет дружбы народов
       country: Российская Федерация
