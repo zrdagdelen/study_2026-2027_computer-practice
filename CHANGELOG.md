@@ -5,14 +5,15 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/).
 Версии соответствуют релизам лабораторных работ курса.
 
-## [Unreleased]
+## [5.0.0] - 2026-10-30
 ### Added
-- Презентация к ЛР5 (presentation/)
 - Лабораторная работа № 5: отчёт (`report/report.pdf`, `report/report.docx`, `report/report.qmd`).
 - Исходный код к ЛР5 (`laba5_plot.ipynb`).
-- Скриншоты примеров и самостоятельных заданий (`report/image/`).
 - Результаты выполнения кода: таблицы и файлы (`content/`).
+- Скриншоты примеров и самостоятельных заданий (`report/image/`).
 - Библиография `report/bib/cite.bib`.
+- Презентация к ЛР5 (`presentation/`).
+- Релизы `ver5.0.0` на GitVerse и SourceCraft.
 
 ## [4.0.0] - 2026-10-22
 ### Added
