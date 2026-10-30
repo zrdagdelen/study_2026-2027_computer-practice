@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Презентация к ЛР5 (presentation/)
 - Лабораторная работа № 5: отчёт (`report/report.pdf`, `report/report.docx`, `report/report.qmd`).
 - Исходный код к ЛР5 (`laba5_plot.ipynb`).
 - Скриншоты примеров и самостоятельных заданий (`report/image/`).
